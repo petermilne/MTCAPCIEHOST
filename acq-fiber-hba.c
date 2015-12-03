@@ -53,16 +53,7 @@ module_param(afhba_debug, int, 0644);
 int ll_mode_only = 1;
 module_param(ll_mode_only, int, 0444);
 
-
-#define PCI_VENDOR_ID_XILINX      0x10ee
-#define PCI_DEVICE_ID_XILINX_PCIE 0x0007
-// D-TACQ changes the device ID to work around unwanted zomojo lspci listing */
-#define PCI_DEVICE_ID_DTACQ_PCIE  0xadc1
-
-#define PCI_SUBVID_DTACQ	0xd1ac
-#define PCI_SUBDID_FHBA_2G	0x4100
-#define PCI_SUBDID_FHBA_4G_OLD	0x4101
-#define PCI_SUBDID_FHBA_4G	0x4102
+#include "d-tacq_pci_id.h"
 
 
 int BUFFER_LEN = 0x100000;
@@ -412,6 +403,8 @@ static struct pci_device_id afhba_pci_tbl[] = {
 		PCI_SUBVID_DTACQ, PCI_SUBDID_FHBA_4G_OLD, 0 },
 	{ PCI_VENDOR_ID_XILINX, PCI_DEVICE_ID_DTACQ_PCIE,
 		PCI_SUBVID_DTACQ, PCI_SUBDID_FHBA_4G, 0 },
+	{ PCI_VENDOR_ID_XILINX, PCI_DEVICE_ID_DTACQ_PCIE,
+		PCI_SUBVID_DTACQ, PCI_SUBDID_HBA_KMCU, 0 },
         { }
 };
 static struct pci_driver afhba_driver = {
@@ -426,10 +419,9 @@ int __init afhba_init_module(void)
 {
 	int rc;
 
-	printk(KERN_INFO "%s %s %s %s\n%s\n",
+	printk(KERN_INFO "%s %s %s \n%s\n",
 	     afhba_driver_name, afhba__driver_string,
 	     afhba__driver_version,
-	     __DATE__,
 	     afhba__copyright);
 
 	afhba_device_class = class_create(THIS_MODULE, "afhba");

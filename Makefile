@@ -13,7 +13,8 @@ EXTRA_CFLAGS += -DCONFIG_SPI
 # make KRNL=2.6.20-1.2948.fc6-i686 ARCH=i386
 # make KRNL=2.6.18-194.26.1.el5 ARCH=i386
 
-all: modules apps llc_support
+all: modules apps 
+#llc_support
 
 flash: spi_support 
 
