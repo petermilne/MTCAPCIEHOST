@@ -28,6 +28,7 @@
  * prefix afs : acq fiber stream
  */
 
+#define COPPER_PCIE
 
 #ifndef EXPORT_SYMTAB
 #define EXPORT_SYMTAB
@@ -39,7 +40,7 @@
 
 #include <linux/version.h>
 
-#define REVID	"1004"
+#define REVID	"1005"
 
 int RX_TO = 1*HZ;
 module_param(RX_TO, int, 0644);
@@ -294,6 +295,7 @@ static inline int afs_dma_started(struct AFHBA_DEV *adev, enum DMA_SEL dma_sel)
 	return _afs_dma_started(adev, dma_pp(dma_sel, DMA_CTRL_PUSH_SHL));
 }
 
+#ifndef COPPER_PCIE
 
 enum AURORA_STATUS {
 	AS_LOS,
@@ -352,7 +354,6 @@ static void _afs_pcie_mirror_init(struct AFHBA_DEV *adev)
 		PCI_REG_WRITE(adev, ireg, afhba_read_reg(adev, ireg*sizeof(u32)));
 	}
 }
-
 #define MSLEEP_TO 10
 
 static int is_valid_z_ident(unsigned z_ident, char buf[], int maxbuf)
@@ -424,11 +425,12 @@ static int _afs_comms_init(struct AFHBA_DEV *adev)
 
 	return sdev->comms_init_done = _afs_check_read(adev) == 1;
 }
+#endif
 
 int afs_comms_init(struct AFHBA_DEV *adev)
 {
 	struct AFHBA_STREAM_DEV* sdev = adev->stream_dev;
-
+#ifndef COPPER_PCIE
 	if (time_before(jiffies, adev->last_amon_jiffies+HZ)){
 		return sdev->comms_init_done;
 	}else if (afs_aurora_lane_up(adev) == AS_LANE_UP){
@@ -448,6 +450,11 @@ int afs_comms_init(struct AFHBA_DEV *adev)
 		}
 		return _afs_comms_init(adev);
 	}
+#else
+/* copper */
+#warning COPPER VERSION
+	return sdev->comms_init_done = adev->link_up = true;
+#endif
 }
 
 

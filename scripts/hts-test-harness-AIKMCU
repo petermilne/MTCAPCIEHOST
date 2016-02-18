@@ -5,7 +5,7 @@
 [ -d scripts ] && cd scripts
 
 # MUST set remote ip-address
-REMIP=${1:-192.168.1.1}
+REMIP=${1:-kmcu_001}
 INTCLKDIV=${INTCLKDIV:-100}		# 100M/100 = 1MHz
 EXTCLKDIV=${EXTCLKDIV:-1}		# 1M/1 = 1MHz
 STREAMPID=0
@@ -18,8 +18,8 @@ CA=13
 # master AI
 AI=1
 
-SITES=1
-CA_SITES=1
+SITES=1,2
+CA_SITES=1,2
 
 
 init_comms() {	
@@ -49,7 +49,7 @@ init_acq2106A() {
 	remote_cmd $SC spad=0,0,0
 	init_comms $CA $CA_SITES
 	remote_cmd $SC run0 $SITES
-	remote_cmd $SC decimate=20
+	remote_cmd $SC decimate=1
 }
 
 start_stream() {
